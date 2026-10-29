@@ -89,7 +89,10 @@ async function start(): Promise<boolean> {
     }
   }
   mkdirSync(STATE, { recursive: true })
-  if (!existsSync(join(ROOT, 'dist', 'index.html'))) spawnSync(process.execPath, ['run', 'build'], { cwd: ROOT, stdio: 'inherit' })
+  if (!existsSync(join(ROOT, 'dist', 'index.html'))) {
+    if (!existsSync(join(ROOT, 'node_modules'))) spawnSync(process.execPath, ['install', '--frozen-lockfile'], { cwd: ROOT, stdio: 'inherit' })
+    spawnSync(process.execPath, ['run', 'build'], { cwd: ROOT, stdio: 'inherit' })
+  }
   const out = openSync(LOG, 'a')
   const child = spawn(process.execPath, [join(ROOT, 'scripts', 'supervise.ts')], {
     cwd: ROOT,
